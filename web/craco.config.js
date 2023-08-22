@@ -1,5 +1,4 @@
 const CracoLessPlugin = require("craco-less");
-const ASSET_PATH = process.env.ASSET_PATH || "/";
 
 module.exports = {
   devServer: {
@@ -55,10 +54,10 @@ module.exports = {
     },
   ],
   webpack: {
-    output: {
-      publicPath: "/casdoor/", // background: url(./xxx.png) 会被编译为 background: url(/static/xxx.png)
-    },
     configure: {
+      output: {
+        publicPath: "/casdoor/",
+      },
       // ignore webpack warnings by source-map-loader
       // https://github.com/facebook/create-react-app/pull/11752#issuecomment-1345231546
       ignoreWarnings: [
