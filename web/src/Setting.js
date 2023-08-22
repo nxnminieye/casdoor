@@ -28,11 +28,12 @@ import moment from "moment";
 
 const {Option} = Select;
 
-export const ServerUrl = "";
+export const ServerUrl = "/casdoor";
 
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
-export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
+export const Countries = [
+  {label: "English", key: "en", country: "US", alt: "English"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
@@ -142,15 +143,15 @@ export const OtherProviderInfo = {
     },
   },
   Email: {
-    "Default": {
+    Default: {
       logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "",
     },
-    "SUBMAIL": {
+    SUBMAIL: {
       logo: `${StaticBaseUrl}/img/social_submail.svg`,
       url: "https://www.mysubmail.com",
     },
-    "Mailtrap": {
+    Mailtrap: {
       logo: `${StaticBaseUrl}/img/email_mailtrap.png`,
       url: "https://mailtrap.io",
     },
@@ -164,7 +165,7 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aws.png`,
       url: "https://aws.amazon.com/s3",
     },
-    "MinIO": {
+    MinIO: {
       logo: "https://min.io/resources/img/logo.svg",
       url: "https://min.io/",
     },
@@ -194,17 +195,17 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/idaas",
     },
-    "Keycloak": {
+    Keycloak: {
       logo: `${StaticBaseUrl}/img/social_keycloak.png`,
       url: "https://www.keycloak.org/",
     },
   },
   Payment: {
-    "Dummy": {
+    Dummy: {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
       url: "",
     },
-    "Alipay": {
+    Alipay: {
       logo: `${StaticBaseUrl}/img/payment_alipay.png`,
       url: "https://www.alipay.com/",
     },
@@ -212,29 +213,29 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
       url: "https://pay.weixin.qq.com/",
     },
-    "PayPal": {
+    PayPal: {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
       url: "https://www.paypal.com/",
     },
-    "Stripe": {
+    Stripe: {
       logo: `${StaticBaseUrl}/img/social_stripe.png`,
       url: "https://stripe.com/",
     },
-    "GC": {
+    GC: {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
       url: "https://gc.org",
     },
   },
   Captcha: {
-    "Default": {
+    Default: {
       logo: `${StaticBaseUrl}/img/captcha_default.png`,
       url: "https://pkg.go.dev/github.com/dchest/captcha",
     },
-    "reCAPTCHA": {
+    reCAPTCHA: {
       logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
       url: "https://www.google.com/recaptcha",
     },
-    "hCaptcha": {
+    hCaptcha: {
       logo: `${StaticBaseUrl}/img/social_hcaptcha.png`,
       url: "https://www.hcaptcha.com",
     },
@@ -242,7 +243,7 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://help.aliyun.com/product/28308.html",
     },
-    "GEETEST": {
+    GEETEST: {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
     },
@@ -258,17 +259,17 @@ export const OtherProviderInfo = {
     },
   },
   Web3: {
-    "MetaMask": {
+    MetaMask: {
       logo: `${StaticBaseUrl}/img/social_metamask.svg`,
       url: "https://metamask.io/",
     },
-    "Web3Onboard": {
+    Web3Onboard: {
       logo: `${StaticBaseUrl}/img/social_web3onboard.svg`,
       url: "https://onboard.blocknative.com/",
     },
   },
   Notification: {
-    "Telegram": {
+    Telegram: {
       logo: `${StaticBaseUrl}/img/social_telegram.png`,
       url: "https://telegram.org/",
     },
@@ -281,7 +282,9 @@ export const OtherProviderInfo = {
 
 export function initCountries() {
   const countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
+  countries.registerLocale(
+    require("i18n-iso-countries/langs/" + getLanguage() + ".json")
+  );
   return countries;
 }
 
@@ -293,23 +296,36 @@ export function getCountryCode(country) {
 }
 
 export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
-  return countryCodes?.map((countryCode) => {
-    if (phoneNumber.isSupportedCountry(countryCode)) {
-      const name = initCountries().getName(countryCode, getLanguage());
-      return {
-        code: countryCode,
-        name: name || "",
-        phone: phoneNumber.getCountryCallingCode(countryCode),
-      };
-    }
-  }).filter(item => item.name !== "")
+  return countryCodes
+    ?.map((countryCode) => {
+      if (phoneNumber.isSupportedCountry(countryCode)) {
+        const name = initCountries().getName(countryCode, getLanguage());
+        return {
+          code: countryCode,
+          name: name || "",
+          phone: phoneNumber.getCountryCallingCode(countryCode),
+        };
+      }
+    })
+    .filter((item) => item.name !== "")
     .sort((a, b) => a.phone - b.phone);
 }
 
 export function getCountryCodeOption(country) {
   return (
-    <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
-      <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
+    <Option
+      key={country.code}
+      value={country.code}
+      label={`+${country.phone}`}
+      text={`${country.name}, ${country.code}, ${country.phone}`}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginRight: "10px",
+        }}
+      >
         <div>
           {getCountryImage(country)}
           {`${country.name}`}
@@ -321,7 +337,14 @@ export function getCountryCodeOption(country) {
 }
 
 export function getCountryImage(country) {
-  return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
+  return (
+    <img
+      src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`}
+      alt={country.name}
+      height={20}
+      style={{marginRight: 10}}
+    />
+  );
 }
 
 export function initServerUrl() {
@@ -392,15 +415,21 @@ export function isSignupItemPrompted(signupItem) {
 }
 
 export function getAllPromptedProviderItems(application) {
-  return application.providers?.filter(providerItem => isProviderPrompted(providerItem));
+  return application.providers?.filter((providerItem) =>
+    isProviderPrompted(providerItem)
+  );
 }
 
 export function getAllPromptedSignupItems(application) {
-  return application.signupItems?.filter(signupItem => isSignupItemPrompted(signupItem));
+  return application.signupItems?.filter((signupItem) =>
+    isSignupItemPrompted(signupItem)
+  );
 }
 
 export function getSignupItem(application, itemName) {
-  const signupItems = application.signupItems?.filter(signupItem => signupItem.name === itemName);
+  const signupItems = application.signupItems?.filter(
+    (signupItem) => signupItem.name === itemName
+  );
   if (signupItems?.length > 0) {
     return signupItems[0];
   }
@@ -424,7 +453,8 @@ export function isValidIdCard(idCard) {
 
 export function isValidEmail(email) {
   // https://github.com/yiminghe/async-validator/blob/057b0b047f88fac65457bae691d6cb7c6fe48ce1/src/rule/type.ts#L9
-  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const emailRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return emailRegex.test(email);
 }
 
@@ -434,10 +464,13 @@ export function isValidPhone(phone, countryCode = "") {
   }
 
   // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
-  const phoneCnRegex = /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
+  const phoneCnRegex =
+    /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
   const phoneRegex = /[0-9]{4,15}$/;
 
-  return countryCode === "CN" ? phoneCnRegex.test(phone) : phoneRegex.test(phone);
+  return countryCode === "CN"
+    ? phoneCnRegex.test(phone)
+    : phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
@@ -559,8 +592,13 @@ export function getMfaItemsByRules(user, organization, mfaRules = []) {
     return [];
   }
 
-  return organization.mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
-    .filter((mfaItem) => user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled));
+  return organization.mfaItems
+    .filter((mfaItem) => mfaRules.includes(mfaItem.rule))
+    .filter((mfaItem) =>
+      user.multiFactorAuths.some(
+        (mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled
+      )
+    );
 }
 
 export function parseObject(s) {
@@ -650,7 +688,13 @@ export function deleteRow(array, i) {
 }
 
 export function swapRow(array, i, j) {
-  return [...array.slice(0, i), array[j], ...array.slice(i + 1, j), array[i], ...array.slice(j + 1)];
+  return [
+    ...array.slice(0, i),
+    array[j],
+    ...array.slice(i + 1, j),
+    array[i],
+    ...array.slice(j + 1),
+  ];
 }
 
 export function trim(str, ch) {
@@ -661,11 +705,15 @@ export function trim(str, ch) {
   let start = 0;
   let end = str.length;
 
-  while (start < end && str[start] === ch) {++start;}
+  while (start < end && str[start] === ch) {
+    ++start;
+  }
 
-  while (end > start && str[end - 1] === ch) {--end;}
+  while (end > start && str[end - 1] === ch) {
+    --end;
+  }
 
-  return (start > 0 || end < str.length) ? str.substring(start, end) : str;
+  return start > 0 || end < str.length ? str.substring(start, end) : str;
 }
 
 export function isMobile() {
@@ -700,8 +748,7 @@ export function getNameAtLeast(s) {
     <React.Fragment>
       &nbsp;
       {s}
-      &nbsp;
-      &nbsp;
+      &nbsp; &nbsp;
     </React.Fragment>
   );
 }
@@ -720,7 +767,7 @@ export function getFriendlyFileSize(size) {
   }
 
   const i = Math.floor(Math.log(size) / Math.log(1024));
-  let num = (size / Math.pow(1024, i));
+  let num = size / Math.pow(1024, i);
   const round = Math.round(num);
   num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round;
   return `${num} ${"KMGTPEZY"[i - 1]}B`;
@@ -731,7 +778,7 @@ function getHashInt(s) {
   if (s.length !== 0) {
     for (let i = 0; i < s.length; i++) {
       const char = s.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
   }
@@ -764,7 +811,12 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return (i18next.language !== undefined && i18next.language !== null && i18next.language !== "" && i18next.language !== "null") ? i18next.language : Conf.DefaultLanguage;
+  return i18next.language !== undefined &&
+    i18next.language !== null &&
+    i18next.language !== "" &&
+    i18next.language !== "null"
+    ? i18next.language
+    : Conf.DefaultLanguage;
 }
 
 export function setLanguage(language) {
@@ -781,10 +833,12 @@ export function getAcceptLanguage() {
 
 export function getClickable(text) {
   return (
-    <a onClick={() => {
-      copy(text);
-      showMessage("success", "Copied to clipboard");
-    }}>
+    <a
+      onClick={() => {
+        copy(text);
+        showMessage("success", "Copied to clipboard");
+      }}
+    >
       {text}
     </a>
   );
@@ -809,164 +863,154 @@ export function getProviderLogoURL(provider) {
 export function getProviderLogo(provider) {
   const idp = provider.type.toLowerCase().trim().split(" ")[0];
   const url = getProviderLogoURL(provider);
-  return (
-    <img width={30} height={30} src={url} alt={idp} />
-  );
+  return <img width={30} height={30} src={url} alt={idp} />;
 }
 
 export function getProviderTypeOptions(category) {
   if (category === "OAuth") {
-    return (
-      [
-        {id: "Google", name: "Google"},
-        {id: "GitHub", name: "GitHub"},
-        {id: "QQ", name: "QQ"},
-        {id: "WeChat", name: "WeChat"},
-        {id: "WeChatMiniProgram", name: "WeChat Mini Program"},
-        {id: "Facebook", name: "Facebook"},
-        {id: "DingTalk", name: "DingTalk"},
-        {id: "Weibo", name: "Weibo"},
-        {id: "Gitee", name: "Gitee"},
-        {id: "LinkedIn", name: "LinkedIn"},
-        {id: "WeCom", name: "WeCom"},
-        {id: "Lark", name: "Lark"},
-        {id: "GitLab", name: "GitLab"},
-        {id: "ADFS", name: "ADFS"},
-        {id: "Baidu", name: "Baidu"},
-        {id: "Alipay", name: "Alipay"},
-        {id: "Casdoor", name: "Casdoor"},
-        {id: "Infoflow", name: "Infoflow"},
-        {id: "Apple", name: "Apple"},
-        {id: "AzureAD", name: "AzureAD"},
-        {id: "Slack", name: "Slack"},
-        {id: "Steam", name: "Steam"},
-        {id: "Bilibili", name: "Bilibili"},
-        {id: "Okta", name: "Okta"},
-        {id: "Douyin", name: "Douyin"},
-        {id: "Line", name: "Line"},
-        {id: "Amazon", name: "Amazon"},
-        {id: "Auth0", name: "Auth0"},
-        {id: "BattleNet", name: "Battle.net"},
-        {id: "Bitbucket", name: "Bitbucket"},
-        {id: "Box", name: "Box"},
-        {id: "CloudFoundry", name: "Cloud Foundry"},
-        {id: "Dailymotion", name: "Dailymotion"},
-        {id: "Deezer", name: "Deezer"},
-        {id: "DigitalOcean", name: "DigitalOcean"},
-        {id: "Discord", name: "Discord"},
-        {id: "Dropbox", name: "Dropbox"},
-        {id: "EveOnline", name: "Eve Online"},
-        {id: "Fitbit", name: "Fitbit"},
-        {id: "Gitea", name: "Gitea"},
-        {id: "Heroku", name: "Heroku"},
-        {id: "InfluxCloud", name: "InfluxCloud"},
-        {id: "Instagram", name: "Instagram"},
-        {id: "Intercom", name: "Intercom"},
-        {id: "Kakao", name: "Kakao"},
-        {id: "Lastfm", name: "Lastfm"},
-        {id: "Mailru", name: "Mailru"},
-        {id: "Meetup", name: "Meetup"},
-        {id: "MicrosoftOnline", name: "MicrosoftOnline"},
-        {id: "Naver", name: "Naver"},
-        {id: "Nextcloud", name: "Nextcloud"},
-        {id: "OneDrive", name: "OneDrive"},
-        {id: "Oura", name: "Oura"},
-        {id: "Patreon", name: "Patreon"},
-        {id: "PayPal", name: "PayPal"},
-        {id: "SalesForce", name: "SalesForce"},
-        {id: "Shopify", name: "Shopify"},
-        {id: "Soundcloud", name: "Soundcloud"},
-        {id: "Spotify", name: "Spotify"},
-        {id: "Strava", name: "Strava"},
-        {id: "Stripe", name: "Stripe"},
-        {id: "TikTok", name: "TikTok"},
-        {id: "Tumblr", name: "Tumblr"},
-        {id: "Twitch", name: "Twitch"},
-        {id: "Twitter", name: "Twitter"},
-        {id: "Typetalk", name: "Typetalk"},
-        {id: "Uber", name: "Uber"},
-        {id: "VK", name: "VK"},
-        {id: "Wepay", name: "Wepay"},
-        {id: "Xero", name: "Xero"},
-        {id: "Yahoo", name: "Yahoo"},
-        {id: "Yammer", name: "Yammer"},
-        {id: "Yandex", name: "Yandex"},
-        {id: "Zoom", name: "Zoom"},
-        {id: "Custom", name: "Custom"},
-      ]
-    );
+    return [
+      {id: "Google", name: "Google"},
+      {id: "GitHub", name: "GitHub"},
+      {id: "QQ", name: "QQ"},
+      {id: "WeChat", name: "WeChat"},
+      {id: "WeChatMiniProgram", name: "WeChat Mini Program"},
+      {id: "Facebook", name: "Facebook"},
+      {id: "DingTalk", name: "DingTalk"},
+      {id: "Weibo", name: "Weibo"},
+      {id: "Gitee", name: "Gitee"},
+      {id: "LinkedIn", name: "LinkedIn"},
+      {id: "WeCom", name: "WeCom"},
+      {id: "Lark", name: "Lark"},
+      {id: "GitLab", name: "GitLab"},
+      {id: "ADFS", name: "ADFS"},
+      {id: "Baidu", name: "Baidu"},
+      {id: "Alipay", name: "Alipay"},
+      {id: "Casdoor", name: "Casdoor"},
+      {id: "Infoflow", name: "Infoflow"},
+      {id: "Apple", name: "Apple"},
+      {id: "AzureAD", name: "AzureAD"},
+      {id: "Slack", name: "Slack"},
+      {id: "Steam", name: "Steam"},
+      {id: "Bilibili", name: "Bilibili"},
+      {id: "Okta", name: "Okta"},
+      {id: "Douyin", name: "Douyin"},
+      {id: "Line", name: "Line"},
+      {id: "Amazon", name: "Amazon"},
+      {id: "Auth0", name: "Auth0"},
+      {id: "BattleNet", name: "Battle.net"},
+      {id: "Bitbucket", name: "Bitbucket"},
+      {id: "Box", name: "Box"},
+      {id: "CloudFoundry", name: "Cloud Foundry"},
+      {id: "Dailymotion", name: "Dailymotion"},
+      {id: "Deezer", name: "Deezer"},
+      {id: "DigitalOcean", name: "DigitalOcean"},
+      {id: "Discord", name: "Discord"},
+      {id: "Dropbox", name: "Dropbox"},
+      {id: "EveOnline", name: "Eve Online"},
+      {id: "Fitbit", name: "Fitbit"},
+      {id: "Gitea", name: "Gitea"},
+      {id: "Heroku", name: "Heroku"},
+      {id: "InfluxCloud", name: "InfluxCloud"},
+      {id: "Instagram", name: "Instagram"},
+      {id: "Intercom", name: "Intercom"},
+      {id: "Kakao", name: "Kakao"},
+      {id: "Lastfm", name: "Lastfm"},
+      {id: "Mailru", name: "Mailru"},
+      {id: "Meetup", name: "Meetup"},
+      {id: "MicrosoftOnline", name: "MicrosoftOnline"},
+      {id: "Naver", name: "Naver"},
+      {id: "Nextcloud", name: "Nextcloud"},
+      {id: "OneDrive", name: "OneDrive"},
+      {id: "Oura", name: "Oura"},
+      {id: "Patreon", name: "Patreon"},
+      {id: "PayPal", name: "PayPal"},
+      {id: "SalesForce", name: "SalesForce"},
+      {id: "Shopify", name: "Shopify"},
+      {id: "Soundcloud", name: "Soundcloud"},
+      {id: "Spotify", name: "Spotify"},
+      {id: "Strava", name: "Strava"},
+      {id: "Stripe", name: "Stripe"},
+      {id: "TikTok", name: "TikTok"},
+      {id: "Tumblr", name: "Tumblr"},
+      {id: "Twitch", name: "Twitch"},
+      {id: "Twitter", name: "Twitter"},
+      {id: "Typetalk", name: "Typetalk"},
+      {id: "Uber", name: "Uber"},
+      {id: "VK", name: "VK"},
+      {id: "Wepay", name: "Wepay"},
+      {id: "Xero", name: "Xero"},
+      {id: "Yahoo", name: "Yahoo"},
+      {id: "Yammer", name: "Yammer"},
+      {id: "Yandex", name: "Yandex"},
+      {id: "Zoom", name: "Zoom"},
+      {id: "Custom", name: "Custom"},
+    ];
   } else if (category === "Email") {
-    return (
-      [
-        {id: "Default", name: "Default"},
-        {id: "SUBMAIL", name: "SUBMAIL"},
-        {id: "Mailtrap", name: "Mailtrap"},
-      ]
-    );
+    return [
+      {id: "Default", name: "Default"},
+      {id: "SUBMAIL", name: "SUBMAIL"},
+      {id: "Mailtrap", name: "Mailtrap"},
+    ];
   } else if (category === "SMS") {
-    return (
-      [
-        {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
-        {id: "Amazon SNS", name: "Amazon SNS"},
-        {id: "Azure ACS", name: "Azure ACS"},
-        {id: "Infobip SMS", name: "Infobip SMS"},
-        {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
-        {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},
-        {id: "Volc Engine SMS", name: "Volc Engine SMS"},
-        {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
-        {id: "UCloud SMS", name: "UCloud SMS"},
-        {id: "Twilio SMS", name: "Twilio SMS"},
-        {id: "SmsBao SMS", name: "SmsBao SMS"},
-        {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
-        {id: "Msg91 SMS", name: "Msg91 SMS"},
-      ]
-    );
+    return [
+      {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
+      {id: "Amazon SNS", name: "Amazon SNS"},
+      {id: "Azure ACS", name: "Azure ACS"},
+      {id: "Infobip SMS", name: "Infobip SMS"},
+      {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
+      {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},
+      {id: "Volc Engine SMS", name: "Volc Engine SMS"},
+      {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
+      {id: "UCloud SMS", name: "UCloud SMS"},
+      {id: "Twilio SMS", name: "Twilio SMS"},
+      {id: "SmsBao SMS", name: "SmsBao SMS"},
+      {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
+      {id: "Msg91 SMS", name: "Msg91 SMS"},
+    ];
   } else if (category === "Storage") {
-    return (
-      [
-        {id: "Local File System", name: "Local File System"},
-        {id: "AWS S3", name: "AWS S3"},
-        {id: "MinIO", name: "MinIO"},
-        {id: "Aliyun OSS", name: "Aliyun OSS"},
-        {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
-        {id: "Azure Blob", name: "Azure Blob"},
-        {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
-        {id: "Google Cloud Storage", name: "Google Cloud Storage"},
-      ]
-    );
+    return [
+      {id: "Local File System", name: "Local File System"},
+      {id: "AWS S3", name: "AWS S3"},
+      {id: "MinIO", name: "MinIO"},
+      {id: "Aliyun OSS", name: "Aliyun OSS"},
+      {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
+      {id: "Azure Blob", name: "Azure Blob"},
+      {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
+      {id: "Google Cloud Storage", name: "Google Cloud Storage"},
+    ];
   } else if (category === "SAML") {
-    return ([
+    return [
       {id: "Aliyun IDaaS", name: "Aliyun IDaaS"},
       {id: "Keycloak", name: "Keycloak"},
-    ]);
+    ];
   } else if (category === "Payment") {
-    return ([
+    return [
       {id: "Dummy", name: "Dummy"},
       {id: "Alipay", name: "Alipay"},
       {id: "WeChat Pay", name: "WeChat Pay"},
       {id: "PayPal", name: "PayPal"},
       {id: "Stripe", name: "Stripe"},
       {id: "GC", name: "GC"},
-    ]);
+    ];
   } else if (category === "Captcha") {
-    return ([
+    return [
       {id: "Default", name: "Default"},
       {id: "reCAPTCHA", name: "reCAPTCHA"},
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
-    ]);
+    ];
   } else if (category === "Web3") {
-    return ([
+    return [
       {id: "MetaMask", name: "MetaMask"},
       {id: "Web3Onboard", name: "Web3-Onboard"},
-    ]);
+    ];
   } else if (category === "Notification") {
-    return ([
+    return [
       {id: "Telegram", name: "Telegram"},
       {id: "Custom HTTP", name: "Custom HTTP"},
-    ]);
+    ];
   } else {
     return [];
   }
@@ -980,12 +1024,22 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
+        <img
+          className="panel-logo"
+          width={250}
+          src={application.logo}
+          alt={application.displayName}
+        />
       </a>
     );
   } else {
     return (
-      <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
+      <img
+        className="panel-logo"
+        width={250}
+        src={application.logo}
+        alt={application.displayName}
+      />
     );
   }
 }
@@ -994,8 +1048,14 @@ export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (
+    !application.enablePassword &&
+    window.location.pathname.includes("/auto-signup/oauth/authorize")
+  ) {
+    url = window.location.href.replace(
+      "/auto-signup/oauth/authorize",
+      "/login/oauth/authorize"
+    );
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
@@ -1027,19 +1087,33 @@ function renderLink(url, text, onClick) {
 
   if (url.startsWith("/")) {
     return (
-      <Link style={{float: "right"}} to={url} onClick={() => {
-        if (onClick !== null) {
-          onClick();
-        }
-      }}>{text}</Link>
+      <Link
+        style={{float: "right"}}
+        to={url}
+        onClick={() => {
+          if (onClick !== null) {
+            onClick();
+          }
+        }}
+      >
+        {text}
+      </Link>
     );
   } else if (url.startsWith("http")) {
     return (
-      <a target="_blank" rel="noopener noreferrer" style={{float: "right"}} href={url} onClick={() => {
-        if (onClick !== null) {
-          onClick();
-        }
-      }}>{text}</a>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{float: "right"}}
+        href={url}
+        onClick={() => {
+          if (onClick !== null) {
+            onClick();
+          }
+        }}
+      >
+        {text}
+      </a>
     );
   } else {
     return null;
@@ -1050,8 +1124,14 @@ export function renderSignupLink(application, text) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+  } else if (
+    !application.enablePassword &&
+    window.location.pathname.includes("/login/oauth/authorize")
+  ) {
+    url = window.location.href.replace(
+      "/login/oauth/authorize",
+      "/auto-signup/oauth/authorize"
+    );
   } else if (authConfig.appName === application.name) {
     url = "/signup";
   } else {
@@ -1087,7 +1167,13 @@ export function renderForgetLink(application, text) {
 }
 
 export function renderHelmet(application) {
-  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null || application.organizationObj === "") {
+  if (
+    application === undefined ||
+    application === null ||
+    application.organizationObj === undefined ||
+    application.organizationObj === null ||
+    application.organizationObj === ""
+  ) {
     return null;
   }
 
@@ -1122,17 +1208,19 @@ export function getOption(label, value) {
 }
 
 export function getArrayItem(array, key, value) {
-  const res = array.filter(item => item[key] === value)[0];
+  const res = array.filter((item) => item[key] === value)[0];
   return res;
 }
 
 export function getDeduplicatedArray(array, filterArray, key) {
-  const res = array.filter(item => !filterArray.some(tableItem => tableItem[key] === item[key]));
+  const res = array.filter(
+    (item) => !filterArray.some((tableItem) => tableItem[key] === item[key])
+  );
   return res;
 }
 
 export function getNewRowNameForTable(table, rowName) {
-  const emptyCount = table.filter(row => row.name.includes(rowName)).length;
+  const emptyCount = table.filter((row) => row.name.includes(rowName)).length;
   let res = rowName;
   for (let i = 0; i < emptyCount; i++) {
     res = res + " ";
@@ -1152,17 +1240,11 @@ export function getTags(tags, urlPrefix = null) {
 
   tags.forEach((tag, i) => {
     if (urlPrefix === null) {
-      res.push(
-        <Tag color={getTagColor(tag)}>
-          {tag}
-        </Tag>
-      );
+      res.push(<Tag color={getTagColor(tag)}>{tag}</Tag>);
     } else {
       res.push(
         <Link to={`/${urlPrefix}/${tag}`}>
-          <Tag color={getTagColor(tag)}>
-            {tag}
-          </Tag>
+          <Tag color={getTagColor(tag)}>{tag}</Tag>
         </Link>
       );
     }
@@ -1171,11 +1253,7 @@ export function getTags(tags, urlPrefix = null) {
 }
 
 export function getTag(color, text) {
-  return (
-    <Tag color={color}>
-      {text}
-    </Tag>
-  );
+  return <Tag color={color}>{text}</Tag>;
 }
 
 export function getApplicationName(application) {

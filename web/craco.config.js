@@ -1,4 +1,5 @@
 const CracoLessPlugin = require("craco-less");
+const ASSET_PATH = process.env.ASSET_PATH || "/";
 
 module.exports = {
   devServer: {
@@ -43,7 +44,10 @@ module.exports = {
       options: {
         lessLoaderOptions: {
           lessOptions: {
-            modifyVars: {"@primary-color": "rgb(89,54,213)", "@border-radius-base": "5px"},
+            modifyVars: {
+              "@primary-color": "rgb(89,54,213)",
+              "@border-radius-base": "5px",
+            },
             javascriptEnabled: true,
           },
         },
@@ -51,17 +55,20 @@ module.exports = {
     },
   ],
   webpack: {
+    output: {
+      publicPath: "/casdoor/", // background: url(./xxx.png) 会被编译为 background: url(/static/xxx.png)
+    },
     configure: {
-      // ignore webpack warnings by source-map-loader 
+      // ignore webpack warnings by source-map-loader
       // https://github.com/facebook/create-react-app/pull/11752#issuecomment-1345231546
       ignoreWarnings: [
         function ignoreSourcemapsloaderWarnings(warning) {
           return (
             warning.module &&
-            warning.module.resource.includes('node_modules') &&
+            warning.module.resource.includes("node_modules") &&
             warning.details &&
-            warning.details.includes('source-map-loader')
-          )
+            warning.details.includes("source-map-loader")
+          );
         },
       ],
       // use polyfill Buffer with Webpack 5
@@ -77,20 +84,20 @@ module.exports = {
           // "http": require.resolve("stream-http"),
           // "https": require.resolve("https-browserify"),
           // "assert": require.resolve("assert/"),
-          "buffer": require.resolve('buffer/'),    
-          "process": false,
-          "util": false,
-          "url": false,
-          "zlib": false,
-          "stream": false,
-          "http": false,
-          "https": false,
-          "assert": false,
-          "buffer": false,
-          "crypto": false,
-          "os": false,
+          buffer: require.resolve("buffer/"),
+          process: false,
+          util: false,
+          url: false,
+          zlib: false,
+          stream: false,
+          http: false,
+          https: false,
+          assert: false,
+          buffer: false,
+          crypto: false,
+          os: false,
         },
-      }
+      },
     },
-  }
+  },
 };
